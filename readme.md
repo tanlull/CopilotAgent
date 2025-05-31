@@ -1,7 +1,9 @@
-Github : 
-https://github.com/tanlull/Build-App-GitHub-Copilot-Agent
+##  เตรียมตัว 
+1. ติดตั้ง extension บน VS Code : (1) Github Copilot และ (2)  Github Copilot Chat
+2. เปิด Github Copilot Chat (icon ถัดจากปุ่มค้นหาด้านบน VS Code)
+3. Copilot Chat : เปลี่ยน mode Ask -> Agent และ mode = GPT-4.1
 
-# Building-applications-with-GitHub-Copilot-agent-mode---COPILOT-PROMPT
+
 
 ## เริ่มต้นโปรเจกต์ BMI Calculator
 
