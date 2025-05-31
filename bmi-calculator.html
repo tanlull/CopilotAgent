@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BMI Calculator</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body class="bg-gradient-to-br from-blue-100 to-blue-300 min-h-screen flex items-center justify-center">
+  <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+    <h1 class="text-2xl font-bold mb-6 text-center text-blue-700">BMI Calculator</h1>
+    <form id="bmiForm" class="space-y-4">
+      <div>
+        <label for="weight" class="block text-gray-700">Weight (kg):</label>
+        <input type="number" id="weight" name="weight" min="1" step="any" required class="mt-1 w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400">
+      </div>
+      <div>
+        <label for="height" class="block text-gray-700">Height (cm):</label>
+        <input type="number" id="height" name="height" min="1" step="any" required class="mt-1 w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400">
+      </div>
+      <button type="submit" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 rounded transition">Calculate BMI</button>
+    </form>
+    <div id="result" class="mt-6 text-center text-lg font-medium text-blue-800"></div>
+  </div>
+  <script type="module">
+    import { calculateBMI, getBMICategory } from './bmi.js';
+    document.getElementById('bmiForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const weight = parseFloat(document.getElementById('weight').value);
+      const height = parseFloat(document.getElementById('height').value);
+      if (!weight || !height) {
+        Swal.fire({
+          icon: 'warning',
+          title: 'กรุณากรอกน้ำหนักและส่วนสูงให้ถูกต้อง',
+          confirmButtonColor: '#3b82f6'
+        });
+        return;
+      }
+      const bmi = calculateBMI(weight, height);
+      const category = getBMICategory(bmi);
+      const details = (function(category) {
+        switch(category) {
+          case 'Underweight':
+            return {
+              title: 'ผอม (Underweight)',
+              icon: 'info',
+              color: '#38bdf8',
+              advice: 'ควรรับประทานอาหารให้ครบ 5 หมู่ เพิ่มปริมาณโปรตีนและคาร์โบไฮเดรต ออกกำลังกายเพื่อเสริมสร้างกล้ามเนื้อ และพักผ่อนให้เพียงพอ'
+            };
+          case 'Normal':
+            return {
+              title: 'น้ำหนักปกติ (Normal)',
+              icon: 'success',
+              color: '#22c55e',
+              advice: 'รักษาน้ำหนักให้อยู่ในเกณฑ์ ออกกำลังกายสม่ำเสมอ รับประทานอาหารที่มีประโยชน์ และตรวจสุขภาพประจำปี'
+            };
+          case 'Overweight':
+            return {
+              title: 'น้ำหนักเกิน (Overweight)',
+              icon: 'warning',
+              color: '#facc15',
+              advice: 'ควรควบคุมอาหาร ลดอาหารไขมันสูงและหวาน ออกกำลังกายอย่างสม่ำเสมอ และตรวจสุขภาพเป็นประจำ'
+            };
+          case 'Obese':
+            return {
+              title: 'อ้วน (Obese)',
+              icon: 'error',
+              color: '#f87171',
+              advice: 'ควรปรึกษาแพทย์หรือผู้เชี่ยวชาญด้านโภชนาการ ควบคุมอาหารและออกกำลังกายอย่างจริงจัง เพื่อลดความเสี่ยงต่อโรคเรื้อรัง'
+            };
+          default:
+            return {
+              title: 'อ้วนมาก (Severely Obese)',
+              icon: 'error',
+              color: '#ef4444',
+              advice: 'ควรพบแพทย์เพื่อรับคำแนะนำเฉพาะทาง ควบคุมอาหารอย่างเข้มงวด และออกกำลังกายภายใต้การดูแลของผู้เชี่ยวชาญ'
+            };
+        }
+      })(category);
+      Swal.fire({
+        title: `${details.title}`,
+        html: `<div class='text-xl font-bold mb-2'>BMI ของคุณคือ ${bmi.toFixed(2)}</div><div class='text-base'>${details.advice}</div>`,
+        icon: details.icon,
+        confirmButtonColor: details.color
+      });
+      document.getElementById('result').textContent = '';
+    });
+  </script>
+</body>
+</html>

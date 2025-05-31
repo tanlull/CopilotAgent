@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Health Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gradient-to-br from-blue-100 to-blue-300 min-h-screen flex items-center justify-center">
+  <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-2xl">
+    <h1 class="text-2xl font-bold mb-6 text-center text-blue-700">Health Dashboard</h1>
+    <form id="healthForm" class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+      <div>
+        <label for="weight" class="block text-gray-700">Weight (kg):</label>
+        <input type="number" id="weight" name="weight" min="1" step="any" required class="mt-1 w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400">
+      </div>
+      <div>
+        <label for="height" class="block text-gray-700">Height (cm):</label>
+        <input type="number" id="height" name="height" min="1" step="any" required class="mt-1 w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400">
+      </div>
+      <div>
+        <label for="age" class="block text-gray-700">Age (years):</label>
+        <input type="number" id="age" name="age" min="1" step="1" required class="mt-1 w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400">
+      </div>
+      <div>
+        <label for="gender" class="block text-gray-700">Gender:</label>
+        <select id="gender" name="gender" required class="mt-1 w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400">
+          <option value="male">Male</option>
+          <option value="female">Female</option>
+        </select>
+      </div>
+      <div class="md:col-span-2">
+        <button type="submit" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 rounded transition">Calculate Health Data</button>
+      </div>
+    </form>
+    <div id="dashboard" class="hidden">
+      <h2 class="text-xl font-semibold mb-4 text-blue-600">Your Health Data</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="p-4 bg-blue-50 rounded shadow">
+          <div class="font-bold text-blue-700">BMI</div>
+          <div id="bmiValue" class="text-2xl font-semibold"></div>
+          <div id="bmiCategory" class="text-sm mt-1"></div>
+        </div>
+        <div class="p-4 bg-green-50 rounded shadow">
+          <div class="font-bold text-green-700">Calories Needed/Day</div>
+          <div id="caloriesValue" class="text-2xl font-semibold"></div>
+        </div>
+        <div class="p-4 bg-cyan-50 rounded shadow">
+          <div class="font-bold text-cyan-700">Water Intake/Day</div>
+          <div id="waterValue" class="text-2xl font-semibold"></div>
+        </div>
+        <div class="p-4 bg-yellow-50 rounded shadow">
+          <div class="font-bold text-yellow-700">Protein Needed/Day</div>
+          <div id="proteinValue" class="text-2xl font-semibold"></div>
+        </div>
+        <div class="p-4 bg-purple-50 rounded shadow">
+          <div class="font-bold text-purple-700">BMR</div>
+          <div id="bmrValue" class="text-2xl font-semibold"></div>
+        </div>
+        <div class="p-4 bg-pink-50 rounded shadow">
+          <div class="font-bold text-pink-700">% Body Fat (Estimate)</div>
+          <div id="bodyFatValue" class="text-2xl font-semibold"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script type="module">
+    import {
+      calculateBMI,
+      getBMICategory,
+      getCalories,
+      getWaterIntake,
+      getProtein,
+      getBMR,
+      getBodyFat
+    } from './bmi.js';
+    document.getElementById('healthForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const weight = parseFloat(document.getElementById('weight').value);
+      const height = parseFloat(document.getElementById('height').value);
+      const age = parseInt(document.getElementById('age').value);
+      const gender = document.getElementById('gender').value;
+      if (!weight || !height || !age || !gender) return;
+      const bmi = calculateBMI(weight, height);
+      const calories = getCalories(weight, height, age, gender);
+      const water = getWaterIntake(weight);
+      const protein = getProtein(weight);
+      const bmr = getBMR(weight, height, age, gender);
+      const bodyFat = getBodyFat(bmi, age, gender);
+      document.getElementById('bmiValue').textContent = bmi.toFixed(2);
+      document.getElementById('bmiCategory').textContent = getBMICategory(bmi);
+      document.getElementById('caloriesValue').textContent = calories + ' kcal';
+      document.getElementById('waterValue').textContent = water + ' L';
+      document.getElementById('proteinValue').textContent = protein + ' g';
+      document.getElementById('bmrValue').textContent = bmr + ' kcal';
+      document.getElementById('bodyFatValue').textContent = bodyFat + ' %';
+      document.getElementById('dashboard').classList.remove('hidden');
+    });
+  </script>
+</body>
+</html>
